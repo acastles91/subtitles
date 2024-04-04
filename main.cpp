@@ -20,6 +20,7 @@
 #include <fstream>
 #include <streambuf>
 #include <string>
+#include <iostream>
 
 #include <getopt.h>
 #include <math.h>
@@ -89,6 +90,49 @@ static void add_micros(struct timespec *accumulator, long micros) {
 
 // Read line and return if it changed.
 typedef uint64_t stat_fingerprint_t;
+
+static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*>& out,
+                                  stat_fingerprint_t *last_file_status) {
+  if (out.size() != 2) {
+    std::cerr << "Error: Output vector must contain two string pointers." << std::endl;
+    return false;
+  }
+
+  struct stat sb;
+  if (stat(filename, &sb) < 0) {
+    perror("Couldn't determine file change");
+    return false;
+  }
+
+  const stat_fingerprint_t fp = ((uint64_t)sb.st_mtime << 32) + sb.st_size;
+  if (fp == *last_file_status) {
+    return false; // No change according to stat()
+  }
+
+  *last_file_status = fp;
+  std::ifstream fs(filename);
+  if (!fs.is_open()) {
+    std::cerr << "Failed to open file: " << filename << std::endl;
+    return false;
+  }
+
+  std::string str((std::istreambuf_iterator<char>(fs)),
+                  std::istreambuf_iterator<char>());
+
+  size_t newline_pos = str.find('\n');
+  if (newline_pos != std::string::npos) {
+    // Found a newline, split the string.
+    *out[0] = str.substr(0, newline_pos); // First part until newline
+    *out[1] = str.substr(newline_pos + 1); // Rest after the newline
+  } else {
+    // No newline found, entire content goes into the first string, second string remains empty.
+    *out[0] = str;
+    out[1]->clear();
+  }
+
+  return true;
+}
+
 static bool ReadLineOnChange(const char *filename, std::string *out,
                              stat_fingerprint_t *last_file_status) {
   struct stat sb;
@@ -143,6 +187,7 @@ int main(int argc, char *argv[]) {
   int blink_on = 0;
   int blink_off = 0;
 
+  
   int opt;
   while ((opt = getopt(argc, argv, "x:y:f:C:B:O:t:s:l:b:i:")) != -1) {
     switch (opt) {
@@ -264,35 +309,57 @@ int main(int argc, char *argv[]) {
   int y = y_orig;
   int length = 0;
 
+  //Multi-line support
+  std::string firstLine, secondLine;
+  std::vector<std::string*> lines{&firstLine, &secondLine};
+
+
   struct timespec next_frame = {0, 0};
 
   uint64_t frame_counter = 0;
   while (!interrupt_received && loops != 0) {
-    if (input_file){    //if (input_file && ReadLineOnChange(input_file, &line, &last_change)) {
-      ReadLineOnChange(input_file, &line, &last_change);
-      x = x_orig;
+    if (input_file) {
+      if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
+        fprintf(stderr, "Couldn't read file '%s'\n", input_file);
+        return usage(argv[0]);
+      }
     }
+//    if (input_file){    //if (input_file && ReadLineOnChange(input_file, &line, &last_change)) {
+//      ReadLineOnChange(input_file, &line, &last_change);
+//      x = x_orig;
+//    }
     ++frame_counter;
     offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     const bool draw_on_frame = (blink_on <= 0)
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
 
     if (draw_on_frame) {
-      if (outline_font) {
-        // The outline font, we need to write with a negative (-2) text-spacing,
-        // as we want to have the same letter pitch as the regular text that
-        // we then write on top.
-        rgb_matrix::DrawText(offscreen_canvas, *outline_font,
-                             x - 1, y + font.baseline(),
-                             outline_color, NULL,
-                             line.c_str(), letter_spacing - 2);
-      }
+        int baseline_y = y + font.baseline();
+        if (outline_font) {
+            rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+                                 x - 1, baseline_y,
+                                 outline_color, nullptr,
+                                 lines[0]->c_str(), letter_spacing - 2);
+        }
+        length = rgb_matrix::DrawText(offscreen_canvas, font,
+                                      x, baseline_y,
+                                      color, nullptr,
+                                      lines[0]->c_str(), letter_spacing);
 
-      // length = holds how many pixels our text takes up
-      length = rgb_matrix::DrawText(offscreen_canvas, font,
-                                    x, y + font.baseline(),
-                                    color, NULL,
-                                    line.c_str(), letter_spacing);
+        // Draw the second line if it exists
+        if (!lines[1]->empty()) {
+            int second_line_y = baseline_y + font.height(); // Adjust based on your font's height
+            if (outline_font) {
+                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+                                     x - 1, second_line_y,
+                                     outline_color, nullptr,
+                                     lines[1]->c_str(), letter_spacing - 2);
+            }
+            rgb_matrix::DrawText(offscreen_canvas, font,
+                                 x, second_line_y,
+                                 color, nullptr,
+                                 lines[1]->c_str(), letter_spacing);
+        }
     }
 
     x += scroll_direction;
@@ -317,6 +384,49 @@ int main(int argc, char *argv[]) {
     //if (speed <= 0) pause();  // Nothing to scroll.
   }
 
+// Finished. Shut down the RGB matrix.
+
+
+//    if (draw_on_frame) {
+//      if (outline_font) {
+//        // The outline font, we need to write with a negative (-2) text-spacing,
+//        // as we want to have the same letter pitch as the regular text that
+//        // we then write on top.
+//        rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+//                             x - 1, y + font.baseline(),
+//                             outline_color, NULL,
+//                             line.c_str(), letter_spacing - 2);
+//      }
+//
+//      // length = holds how many pixels our text takes up
+//      length = rgb_matrix::DrawText(offscreen_canvas, font,
+//                                    x, y + font.baseline(),
+//                                    color, NULL,
+//                                    line.c_str(), letter_spacing);
+//    }
+//
+//    x += scroll_direction;
+//    if ((scroll_direction < 0 && x + length < 0) ||
+//        (scroll_direction > 0 && x > canvas->width())) {
+//      x = x_orig + ((scroll_direction > 0) ? -length : 0);
+//      if (loops > 0) --loops;
+//    }
+//
+//    // Make sure render-time delays are not influencing scroll-time
+//    if (speed > 0) {
+//      if (next_frame.tv_sec == 0 && next_frame.tv_nsec == 0) {
+//        // First time. Start timer, but don't wait.
+//        clock_gettime(CLOCK_MONOTONIC, &next_frame);
+//      } else {
+//        add_micros(&next_frame, delay_speed_usec);
+//        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_frame, NULL);
+//      }
+//    }
+//    // Swap the offscreen_canvas with canvas on vsync, avoids flickering
+//    offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+//    //if (speed <= 0) pause();  // Nothing to scroll.
+//  }
+//
   // Finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
