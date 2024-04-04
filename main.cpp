@@ -187,7 +187,10 @@ int main(int argc, char *argv[]) {
   int blink_on = 0;
   int blink_off = 0;
 
-  
+  //Multi-line support
+  std::string firstLine, secondLine;
+  std::vector<std::string*> lines{&firstLine, &secondLine};
+
   int opt;
   while ((opt = getopt(argc, argv, "x:y:f:C:B:O:t:s:l:b:i:")) != -1) {
     switch (opt) {
@@ -236,6 +239,13 @@ int main(int argc, char *argv[]) {
       return usage(argv[0]);
     }
   }
+  if (input_file) {
+    if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
+      fprintf(stderr, "Couldn't read file '%s'\n", input_file);
+      return usage(argv[0]);
+    }
+  }
+
   else {
     for (int i = optind; i < argc; ++i) {
       line.append(argv[i]).append(" ");
@@ -309,10 +319,7 @@ int main(int argc, char *argv[]) {
   int y = y_orig;
   int length = 0;
 
-  //Multi-line support
-  std::string firstLine, secondLine;
-  std::vector<std::string*> lines{&firstLine, &secondLine};
-
+  
 
   struct timespec next_frame = {0, 0};
 
