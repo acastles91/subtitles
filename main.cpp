@@ -105,7 +105,7 @@ static bool ReadLineOnChange(const char *filename, std::string *out,
   std::ifstream fs(filename);
   std::string str((std::istreambuf_iterator<char>(fs)),
                   std::istreambuf_iterator<char>());
-  std::replace(str.begin(), str.end(), '\n', ' ');
+  //std::replace(str.begin(), str.end(), '\n', ' '); Removing this line will allow for new lines in the text file
   if (*out == str) {
     return false;  // no content change
   }
