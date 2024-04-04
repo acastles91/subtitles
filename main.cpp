@@ -98,7 +98,7 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
 //    return false;
 //  }
 
-  printf("aqui \n");
+//  printf("aqui \n");
 
   struct stat sb;
   if (stat(filename, &sb) < 0) {
@@ -106,14 +106,14 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
     return false;
   }
 
-  printf("aqui tambien\n");
+//  printf("aqui tambien\n");
 
   const stat_fingerprint_t fp = ((uint64_t)sb.st_mtime << 32) + sb.st_size;
   if (fp == *last_file_status) {
     return false; // No change according to stat()
   }
 
-  printf("aqui de nuevo \n");
+//  printf("aqui de nuevo \n");
   *last_file_status = fp;
   std::ifstream fs(filename);
   if (!fs.is_open()) {
@@ -121,7 +121,7 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
     return false;
   }
 
-  printf("aqui sigue igual \n");
+//  printf("aqui sigue igual \n");
   std::string str((std::istreambuf_iterator<char>(fs)),
                   std::istreambuf_iterator<char>());
 
@@ -136,7 +136,7 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
     out[1]->clear();
   }
 
-  printf("y aqui lo mismo \n");
+//  printf("y aqui lo mismo \n");
   return true;
 }
 
