@@ -93,10 +93,10 @@ typedef uint64_t stat_fingerprint_t;
 
 static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*>& out,
                                   stat_fingerprint_t *last_file_status) {
-  if (out.size() != 2) {
-    std::cerr << "Error: Output vector must contain two string pointers." << std::endl;
-    return false;
-  }
+//  if (out.size() != 2) {
+//    std::cerr << "Error: Output vector must contain two string pointers." << std::endl;
+//    return false;
+//  }
 
   struct stat sb;
   if (stat(filename, &sb) < 0) {
