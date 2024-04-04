@@ -98,6 +98,8 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
 //    return false;
 //  }
 
+  printf("aqui");
+
   struct stat sb;
   if (stat(filename, &sb) < 0) {
     perror("Couldn't determine file change");
