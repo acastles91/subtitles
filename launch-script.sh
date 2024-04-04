@@ -13,16 +13,16 @@ VIDEO_FILE="files/reference.mp4"
 PARSER_SCRIPT="srt-parser.py"
 
 # Clear the content of input.txt
-> "$INPUT_TXT_PATH"
+echo " " > "$INPUT_TXT_PATH"
 
 # Launch the LED matrix control binary
 "$LED_MATRIX_BINARY" &
 
 # Open the video file with MPV, mute sound, and send to the background
-DISPLAY=:0 mpv --no-audio "$VIDEO_FILE" &
+#DISPLAY=:0 mpv --no-audio "$VIDEO_FILE" &
 
 # Wait a bit to ensure MPV starts before running the parser script
-sleep 2
+#sleep 2
 
 # Start the parser script
 python3 "$PARSER_SCRIPT"
