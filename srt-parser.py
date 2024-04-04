@@ -38,6 +38,22 @@ def parse_time(time_str):
     hours, minutes, seconds, milliseconds = map(int, re.split('[:,]', time_str))
     return timedelta(hours=hours, minutes=minutes, seconds=seconds, milliseconds=milliseconds)
 
+def split_text_by_length(text, first_line_length):
+    """Split text into two lines based on a predefined length for the first line."""
+    if len(text) <= first_line_length:
+        # If the text is shorter than or equal to the limit, the first line is the text itself,
+        # and there's no need for a second line.
+        return text, ''
+    else:
+        # If the text exceeds the limit, find the last space before the limit
+        # to avoid breaking words. If there's no space, split at the limit.
+        split_point = text.rfind(' ', 0, first_line_length)
+        if split_point == -1:  # No space found, split at the length limit
+            split_point = first_line_length
+        first_line = text[:split_point]
+        second_line = text[split_point:].strip()
+        return first_line, second_line
+
 
 def remove_html_tags(text):
     """Remove HTML tags from a string."""
@@ -76,6 +92,39 @@ def parse_srt(filename):
         else:
             print(f"Unexpected format in subtitle block: {subtitle}")
 
+def parse_srt(filename, first_line_length):
+    """Parse an SRT file and yield start time, end time, and text for each subtitle,
+       with the text split according to a predefined length for the first line."""
+    with open(filename, 'r', encoding='utf-8') as file:
+        content = file.read().strip()
+
+    # Preprocess content to ensure correct block separation
+    content = preprocess_srt_content(content)
+    # Split the content by double newlines to separate each subtitle block
+    subtitles = content.split('\n\n')
+    
+    for subtitle in subtitles:
+        lines = subtitle.split('\n')
+        if len(lines) >= 3:
+            sequence_number = lines[0]
+            times = lines[1].split(' --> ')
+            if len(times) == 2:  # Ensure there are exactly two times (start and end)
+                start_time = parse_time(times[0].strip())
+                end_time = parse_time(times[1].strip())
+                text = ' '.join(lines[2:]).replace('\n', ' ')
+                text = remove_html_tags(text)
+
+                # Split text into two lines based on the predefined length
+                first_line, second_line = split_text_by_length(text, first_line_length)
+                # Combine the two lines with a newline character
+                text = first_line + "\n" + second_line
+
+                yield start_time, end_time, text
+            else:
+                print(f"Unexpected format in time line: {lines[1]}")
+        else:
+            print(f"Unexpected format in subtitle block: {subtitle}")
+            
 # Function to write text to input.txt
 def write_to_input_file(text):
     with open('input.txt', 'w') as file:
@@ -118,7 +167,8 @@ def main(srt_filename, audio_filename):
     previous_end_time = None
     for start_time, end_time, text in parse_srt(srt_filename):
         # Split the text into lines that fit your LED matrix
-        lines = split_text_into_lines(text, max_chars_per_line)
+        #lines = split_text_into_lines(text, max_chars_per_line)
+        lines = split_text_by_length(text, max_chars_per_line)
         # Write the lines to input.txt for your C++ program to display
         # Calculate wait time until the next subtitle
 
