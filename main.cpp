@@ -233,12 +233,12 @@ int main(int argc, char *argv[]) {
 
   stat_fingerprint_t last_change = 0;
 
-  if (input_file) {
-    if (!ReadLineOnChange(input_file, &line, &last_change)) {
-      fprintf(stderr, "Couldn't read file '%s'\n", input_file);
-      return usage(argv[0]);
-    }
-  }
+//  if (input_file) {
+//    if (!ReadLineOnChange(input_file, &line, &last_change)) {
+//      fprintf(stderr, "Couldn't read file '%s'\n", input_file);
+//      return usage(argv[0]);
+//    }
+//  }
   if (input_file) {
     if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
       fprintf(stderr, "Couldn't read file '%s'\n", input_file);
