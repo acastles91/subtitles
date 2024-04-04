@@ -333,9 +333,8 @@ int main(int argc, char *argv[]) {
   uint64_t frame_counter = 0;
   while (!interrupt_received && loops != 0) {
     if (input_file) {
-      if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
-        fprintf(stderr, "Couldn't read file '%s'\n", input_file);
-        return usage(argv[0]);
+      ReadSplitLineOnChange(input_file, lines, &last_change);
+      x = x_orig;
       }
     }
 //    if (input_file){    //if (input_file && ReadLineOnChange(input_file, &line, &last_change)) {
