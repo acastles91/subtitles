@@ -165,7 +165,7 @@ def main(srt_filename, audio_filename):
     max_chars_per_line = 20
     play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
     previous_end_time = None
-    for start_time, end_time, text in parse_srt(srt_filename):
+    for start_time, end_time, text in parse_srt(srt_filename, max_chars_per_line):
         # Split the text into lines that fit your LED matrix
         #lines = split_text_into_lines(text, max_chars_per_line)
         lines = split_text_by_length(text, max_chars_per_line)
