@@ -67,10 +67,10 @@ def play_audio(audio_filename):
     pygame.mixer.music.play()  # Play the audio file
 
 def parse_srt(filename):
-    """Parse an SRT file and yield start time, end time, and text for each subtitle."""
+    """Parse an SRT file and yield start time, end time, and text for each subtitle entry."""
     with open(filename, 'r', encoding='utf-8') as file:
         content = file.read().strip()
-    
+
     # Preprocess content to ensure correct block separation
     content = preprocess_srt_content(content)
     # Split the content by double newlines to separate each subtitle block
@@ -84,13 +84,42 @@ def parse_srt(filename):
             if len(times) == 2:  # Ensure there are exactly two times (start and end)
                 start_time = parse_time(times[0].strip())
                 end_time = parse_time(times[1].strip())
-                text = ' '.join(lines[2:]).replace('\n', ' ')
+                text_lines = lines[2:]
+                
+                text = '\n'.join(text_lines)  # Keep original lines as they are
                 text = remove_html_tags(text)
+                
                 yield start_time, end_time, text
             else:
                 print(f"Unexpected format in time line: {lines[1]}")
         else:
             print(f"Unexpected format in subtitle block: {subtitle}")
+
+#def parse_srt(filename):
+#    """Parse an SRT file and yield start time, end time, and text for each subtitle."""
+#    with open(filename, 'r', encoding='utf-8') as file:
+#        content = file.read().strip()
+#    
+#    # Preprocess content to ensure correct block separation
+#    content = preprocess_srt_content(content)
+#    # Split the content by double newlines to separate each subtitle block
+#    subtitles = content.split('\n\n')
+#    
+#    for subtitle in subtitles:
+#        lines = subtitle.split('\n')
+#        if len(lines) >= 3:
+#            sequence_number = lines[0]
+#            times = lines[1].split(' --> ')
+#            if len(times) == 2:  # Ensure there are exactly two times (start and end)
+#                start_time = parse_time(times[0].strip())
+#                end_time = parse_time(times[1].strip())
+#                text = ' '.join(lines[2:]).replace('\n', ' ')
+#                text = remove_html_tags(text)
+#                yield start_time, end_time, text
+#            else:
+#                print(f"Unexpected format in time line: {lines[1]}")
+#        else:
+#            print(f"Unexpected format in subtitle block: {subtitle}")
 
 def parse_srt(filename, first_line_length):
     """Parse an SRT file and yield start time, end time, and text for each subtitle,
@@ -165,38 +194,41 @@ def main(srt_filename, audio_filename):
     max_chars_per_line = 20
     play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
     previous_end_time = None
-    for start_time, end_time, text in parse_srt(srt_filename, max_chars_per_line):
-        # Split the text into lines that fit your LED matrix
-        #lines = split_text_into_lines(text, max_chars_per_line)
-        lines = split_text_by_length(text, max_chars_per_line)
-        # Write the lines to input.txt for your C++ program to display
-        # Calculate wait time until the next subtitle
 
-        if previous_end_time is None:
-            # If this is the first subtitle, wait until its start time
-            wait_time = start_time.total_seconds()
-        else:
-            # Otherwise, wait until the start time of the next subtitle,
-            # but ensure there's no negative wait time in case subtitles overlap or are back-to-back
-            wait_time = max(0, (start_time - previous_end_time).total_seconds())
-         
-         # Clear the display if there's a gap between the previous subtitle and the next
-        if previous_end_time is not None and wait_time > 0:
-            write_to_input_file(' ')  # Clear the display during the blank moment
-        print("Waiting wait_time " + str(wait_time))
-        time.sleep(wait_time)  # Wait until it's time for the next subtitle
-        
-        write_to_input_file_lines(lines)
-        #write_to_input_file(text)  # Show the subtitle text
-        
-        # Wait for the duration of the subtitle
-        duration = (end_time - start_time).total_seconds()
-        time.sleep(duration)
-        
-        previous_end_time = end_time  # Update the end time for the next loop iteration
+    with open("input.txt", "w", encoding='utf-8') as out_file:
+        for start_time, end_time, text in parse_srt(srt_filename):
+            # Split the text into lines that fit your LED matrix
+            #lines = split_text_into_lines(text, max_chars_per_line)
+            lines = split_text_by_length(text, max_chars_per_line)
+            # Write the lines to input.txt for your C++ program to display
+            # Calculate wait time until the next subtitle
 
-    # Clear the display after the last subtitle
-    write_to_input_file(' ')
+            if previous_end_time is None:
+                # If this is the first subtitle, wait until its start time
+                wait_time = start_time.total_seconds()
+            else:
+                # Otherwise, wait until the start time of the next subtitle,
+                # but ensure there's no negative wait time in case subtitles overlap or are back-to-back
+                wait_time = max(0, (start_time - previous_end_time).total_seconds())
+
+             # Clear the display if there's a gap between the previous subtitle and the next
+            if previous_end_time is not None and wait_time > 0:
+                write_to_input_file(' ')  # Clear the display during the blank moment
+            print("Waiting wait_time " + str(wait_time))
+            time.sleep(wait_time)  # Wait until it's time for the next subtitle
+
+            #write_to_input_file_lines(lines)
+            #write_to_input_file(text)  # Show the subtitle text
+            out_file.write(text + "\n\n")  # Write each subtitle entry separated by double newlines
+
+            # Wait for the duration of the subtitle
+            duration = (end_time - start_time).total_seconds()
+            time.sleep(duration)
+
+            previous_end_time = end_time  # Update the end time for the next loop iteration
+
+        # Clear the display after the last subtitle
+        out_file.write(' ')
 
 if __name__ == "__main__":
     srt_filename = 'files/subtitles.srt'
