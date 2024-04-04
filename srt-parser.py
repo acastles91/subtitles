@@ -121,38 +121,38 @@ def parse_srt(filename):
 #        else:
 #            print(f"Unexpected format in subtitle block: {subtitle}")
 
-def parse_srt(filename, first_line_length):
-    """Parse an SRT file and yield start time, end time, and text for each subtitle,
-       with the text split according to a predefined length for the first line."""
-    with open(filename, 'r', encoding='utf-8') as file:
-        content = file.read().strip()
-
-    # Preprocess content to ensure correct block separation
-    content = preprocess_srt_content(content)
-    # Split the content by double newlines to separate each subtitle block
-    subtitles = content.split('\n\n')
-    
-    for subtitle in subtitles:
-        lines = subtitle.split('\n')
-        if len(lines) >= 3:
-            sequence_number = lines[0]
-            times = lines[1].split(' --> ')
-            if len(times) == 2:  # Ensure there are exactly two times (start and end)
-                start_time = parse_time(times[0].strip())
-                end_time = parse_time(times[1].strip())
-                text = ' '.join(lines[2:]).replace('\n', ' ')
-                text = remove_html_tags(text)
-
-                # Split text into two lines based on the predefined length
-                first_line, second_line = split_text_by_length(text, first_line_length)
-                # Combine the two lines with a newline character
-                text = first_line + "\n" + second_line
-
-                yield start_time, end_time, text
-            else:
-                print(f"Unexpected format in time line: {lines[1]}")
-        else:
-            print(f"Unexpected format in subtitle block: {subtitle}")
+#def parse_srt(filename, first_line_length):
+#    """Parse an SRT file and yield start time, end time, and text for each subtitle,
+#       with the text split according to a predefined length for the first line."""
+#    with open(filename, 'r', encoding='utf-8') as file:
+#        content = file.read().strip()
+#
+#    # Preprocess content to ensure correct block separation
+#    content = preprocess_srt_content(content)
+#    # Split the content by double newlines to separate each subtitle block
+#    subtitles = content.split('\n\n')
+#    
+#    for subtitle in subtitles:
+#        lines = subtitle.split('\n')
+#        if len(lines) >= 3:
+#            sequence_number = lines[0]
+#            times = lines[1].split(' --> ')
+#            if len(times) == 2:  # Ensure there are exactly two times (start and end)
+#                start_time = parse_time(times[0].strip())
+#                end_time = parse_time(times[1].strip())
+#                text = ' '.join(lines[2:]).replace('\n', ' ')
+#                text = remove_html_tags(text)
+#
+#                # Split text into two lines based on the predefined length
+#                first_line, second_line = split_text_by_length(text, first_line_length)
+#                # Combine the two lines with a newline character
+#                text = first_line + "\n" + second_line
+#
+#                yield start_time, end_time, text
+#            else:
+#                print(f"Unexpected format in time line: {lines[1]}")
+#        else:
+#            print(f"Unexpected format in subtitle block: {subtitle}")
             
 # Function to write text to input.txt
 def write_to_input_file(text):
