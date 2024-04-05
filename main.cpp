@@ -365,7 +365,7 @@ int main(int argc, char *argv[]) {
                                  outline_color, nullptr,
                                  lines[0]->c_str(), letter_spacing - 2);
         }
-        length = rgb_matrix::DrawText(offscreen_canvas, font,
+        rgb_matrix::DrawText(offscreen_canvas, font,
                                       x, baseline_y,
                                       color, nullptr,
                                       lines[0]->c_str(), letter_spacing);
