@@ -198,16 +198,15 @@ def split_text_into_lines(text, max_chars_per_line):
     
     return lines
 
-def main(srt_filename, audio_filename):
+def main(srt_filename, audio_filename, max_chars):
 
-    max_chars_per_line = 20
     play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
     previous_end_time = None
 
     for start_time, end_time, text in parse_srt(srt_filename):
         # Split the text into lines that fit your LED matrix
         #lines = split_text_into_lines(text, max_chars_per_line)
-        lines = split_text_by_length(text, max_chars_per_line)
+        lines = split_text_by_length(text, max_chars)
         # Write the lines to input.txt for your C++ program to display
         # Calculate wait time until the next subtitle
 
