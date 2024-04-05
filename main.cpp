@@ -337,6 +337,7 @@ int main(int argc, char *argv[]) {
     if (input_file) {
       ReadSplitLineOnChange(input_file, lines, &last_change);
       x = x_orig;
+      y = y_orig;
       }
     
 //    if (input_file){    //if (input_file && ReadLineOnChange(input_file, &line, &last_change)) {
