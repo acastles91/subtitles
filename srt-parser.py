@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, time as dt_time
 import time
 import pygame
 import re
+import sys
 
 # Function to parse SRT file and yield subtitles with timecodes
 # Function to write text to input.txt
