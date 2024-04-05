@@ -353,11 +353,7 @@ int main(int argc, char *argv[]) {
         bool has_two_lines = !lines[1]->empty();
         int baseline_y;
 
-        if (has_two_lines){
-          baseline_y = y + font.baseline();
-        } else {
-          baseline_y = y + font.baseline() + font.height() / 2;
-        }
+        baseline_y = y + font.baseline();
 
         if (outline_font) {
             rgb_matrix::DrawText(offscreen_canvas, *outline_font,
@@ -386,12 +382,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    x += scroll_direction;
-    if ((scroll_direction < 0 && x + length < 0) ||
-        (scroll_direction > 0 && x > canvas->width())) {
-      x = x_orig + ((scroll_direction > 0) ? -length : 0);
-      if (loops > 0) --loops;
-    }
 
     // Make sure render-time delays are not influencing scroll-time
     if (speed > 0) {
