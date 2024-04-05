@@ -14,6 +14,15 @@ import re
 #    return datetime.combine(datetime.today(), dt_time(hour=hours, minute=minutes, second=seconds, microsecond=milliseconds*1000))
 #
 
+
+def center_text(text, max_chars):
+    """Center text within a given width by adding whitespace."""
+    line_length = len(text)
+    if line_length < max_chars:
+        padding = (max_chars - line_length) // 2
+        return ' ' * padding + text + ' ' * padding
+    return text
+
 def preprocess_srt_content(content):
     """Collapse multiple consecutive empty lines into a single empty line."""
     # Split the content into lines, remove empty lines, and rejoin with a single empty line
@@ -85,10 +94,9 @@ def parse_srt(filename):
                 start_time = parse_time(times[0].strip())
                 end_time = parse_time(times[1].strip())
                 text_lines = lines[2:]
-                
+                text_lines = [center_text(line, max_chars) for line in text_lines]
                 text = '\n'.join(text_lines)  # Keep original lines as they are
                 text = remove_html_tags(text)
-                
                 yield start_time, end_time, text
             else:
                 print(f"Unexpected format in time line: {lines[1]}")
@@ -234,4 +242,5 @@ def main(srt_filename, audio_filename):
 if __name__ == "__main__":
     srt_filename = 'files/subtitles.srt'
     audio_filename = 'files/audio.wav'
-    main(srt_filename, audio_filename)
+    max_chars = int(sys.argv[1])
+    main(srt_filename, audio_filename,max_chars)

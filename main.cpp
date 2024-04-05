@@ -126,8 +126,10 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
                   std::istreambuf_iterator<char>());
 
   size_t newline_pos = str.find('\n');
+  std::replace(str.begin(), str.end(), '\n', ' '); 
   if (newline_pos != std::string::npos) {
     // Found a newline, split the string.
+    
     *out[0] = str.substr(0, newline_pos); // First part until newline
     *out[1] = str.substr(newline_pos + 1); // Rest after the newline
   } else {
@@ -347,7 +349,16 @@ int main(int argc, char *argv[]) {
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
 
     if (draw_on_frame) {
-        int baseline_y = y + font.baseline();
+
+        bool has_two_lines = !lines[1]->empty();
+        int baseline_y;
+
+        if (has_two_lines){
+          baseline_y = y + font.baseline();
+        } else {
+          baseline_y = y + font.baseline() + font.height() / 2;
+        }
+
         if (outline_font) {
             rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                  x - 1, baseline_y,
@@ -360,7 +371,7 @@ int main(int argc, char *argv[]) {
                                       lines[0]->c_str(), letter_spacing);
 
         // Draw the second line if it exists
-        if (!lines[1]->empty()) {
+        if (has_two_lines){
             int second_line_y = baseline_y + font.height(); // Adjust based on your font's height
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
