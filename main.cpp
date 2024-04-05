@@ -352,7 +352,20 @@ int main(int argc, char *argv[]) {
 
         bool has_two_lines = !lines[1]->empty();
         int baseline_y;
-
+        if (has_two_lines){
+          baseline_y = y + font.baseline();
+            int second_line_y = baseline_y + font.height(); // Adjust based on your font's height
+            if (outline_font) {
+                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+                                     x - 1, second_line_y,
+                                     outline_color, nullptr,
+                                     lines[1]->c_str(), letter_spacing - 2);
+            }
+            rgb_matrix::DrawText(offscreen_canvas, font,
+                                 x, second_line_y,
+                                 color, nullptr,
+                                 lines[1]->c_str(), letter_spacing);
+        }
         baseline_y = y + font.baseline();
 
         if (outline_font) {
@@ -367,19 +380,7 @@ int main(int argc, char *argv[]) {
                                       lines[0]->c_str(), letter_spacing);
 
         // Draw the second line if it exists
-        if (has_two_lines){
-            int second_line_y = baseline_y + font.height(); // Adjust based on your font's height
-            if (outline_font) {
-                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
-                                     x - 1, second_line_y,
-                                     outline_color, nullptr,
-                                     lines[1]->c_str(), letter_spacing - 2);
-            }
-            rgb_matrix::DrawText(offscreen_canvas, font,
-                                 x, second_line_y,
-                                 color, nullptr,
-                                 lines[1]->c_str(), letter_spacing);
-        }
+        
     }
 
 
