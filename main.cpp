@@ -395,8 +395,8 @@ int main(int argc, char *argv[]) {
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
     if (draw_on_frame) {
 
-std::cout << "Line 0: '" << *lines[0] << "'" << std::endl;
-std::cout << "Line 1: '" << *lines[1] << "'" << (lines[1]->empty() ? " (empty)" : " (non-empty)") << std::endl;
+//std::cout << "Line 0: '" << *lines[0] << "'" << std::endl;
+//std::cout << "Line 1: '" << *lines[1] << "'" << (lines[1]->empty() ? " (empty)" : " (non-empty)") << std::endl;
 bool has_two_lines = !lines[1]->empty() && std::find_if(lines[1]->begin(), lines[1]->end(), [](unsigned char c) { return !std::isspace(c); }) != lines[1]->end();
 
 //        bool has_two_lines = !lines[1]->empty();
@@ -429,8 +429,8 @@ bool has_two_lines = !lines[1]->empty() && std::find_if(lines[1]->begin(), lines
 
         
         } else {
-            printf("Drawing single line\n");
-            baseline_y = y + 2 * font.baseline();
+            //printf("Drawing single line\n");
+            baseline_y = y + 2 * font.baseline() - linespace;
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, baseline_y,
