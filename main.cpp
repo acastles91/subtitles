@@ -361,6 +361,17 @@ int main(int argc, char *argv[]) {
   printf("  Letter Spacing: %d\n", letter_spacing);
   printf("  X Origin: %d, Y Origin: %d\n", x_orig, y_orig);
 
+  if (!font.LoadFont(bdf_font_file)) {
+          fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
+          return 1;
+      } else {
+          printf("Font '%s' loaded.\n", bdf_font_file);
+          printf("  Font height: %d\n", font.height());
+      }
+
+      if (with_outline) {
+          printf("Outline font created based on '%s'.\n", bdf_font_file);
+      }
   while (!interrupt_received && loops != 0) {
     if (input_file) {
       ReadSplitLineOnChange(input_file, lines, &last_change);
@@ -378,17 +389,7 @@ int main(int argc, char *argv[]) {
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
 
 
-    if (!font.LoadFont(bdf_font_file)) {
-        fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
-        return 1;
-    } else {
-        printf("Font '%s' loaded.\n", bdf_font_file);
-        printf("  Font height: %d\n", font.height());
-    }
-
-    if (with_outline) {
-        printf("Outline font created based on '%s'.\n", bdf_font_file);
-    }
+    
 
         
 
