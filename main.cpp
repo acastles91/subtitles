@@ -354,6 +354,13 @@ int main(int argc, char *argv[]) {
   struct timespec next_frame = {0, 0};
 
   uint64_t frame_counter = 0;
+  printf("Text Properties:\n");
+  printf("  Color: (%d, %d, %d)\n", color.r, color.g, color.b);
+  printf("  Background Color: (%d, %d, %d)\n", bg_color.r, bg_color.g, bg_color.b);
+  printf("  Outline Color: (%d, %d, %d)\n", outline_color.r, outline_color.g, outline_color.b);
+  printf("  Letter Spacing: %d\n", letter_spacing);
+  printf("  X Origin: %d, Y Origin: %d\n", x_orig, y_orig);
+
   while (!interrupt_received && loops != 0) {
     if (input_file) {
       ReadSplitLineOnChange(input_file, lines, &last_change);
@@ -378,18 +385,12 @@ int main(int argc, char *argv[]) {
         printf("Font '%s' loaded.\n", bdf_font_file);
         printf("  Font height: %d\n", font.height());
     }
-    
+
     if (with_outline) {
         printf("Outline font created based on '%s'.\n", bdf_font_file);
     }
-    
-    printf("Text Properties:\n");
-    printf("  Color: (%d, %d, %d)\n", color.r, color.g, color.b);
-    printf("  Background Color: (%d, %d, %d)\n", bg_color.r, bg_color.g, bg_color.b);
-    printf("  Outline Color: (%d, %d, %d)\n", outline_color.r, outline_color.g, outline_color.b);
-    printf("  Letter Spacing: %d\n", letter_spacing);
-    printf("  X Origin: %d, Y Origin: %d\n", x_orig, y_orig);
-    
+
+        
 
     if (draw_on_frame) {
 
