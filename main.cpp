@@ -87,7 +87,19 @@ static void add_micros(struct timespec *accumulator, long micros) {
     accumulator->tv_sec += 1;
   }
 }
+std::string centerText(const std::string& text, int max_line_length) {
+    int text_length = text.length();
+    if (text_length >= max_line_length) {
+        // If the text is longer or equal to the max length, return it as is.
+        return text;
+    }
 
+    int padding_total = max_line_length - text_length;
+    int padding_side = padding_total / 2; // Evenly distribute padding on both sides
+
+    // Create a padded string with spaces
+    return std::string(padding_side, ' ') + text + std::string(padding_total - padding_side, ' ');
+}
 // Read line and return if it changed.
 typedef uint64_t stat_fingerprint_t;
 
@@ -129,19 +141,7 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
   return true;
 }
 
-std::string centerText(const std::string& text, int max_line_length) {
-    int text_length = text.length();
-    if (text_length >= max_line_length) {
-        // If the text is longer or equal to the max length, return it as is.
-        return text;
-    }
 
-    int padding_total = max_line_length - text_length;
-    int padding_side = padding_total / 2; // Evenly distribute padding on both sides
-
-    // Create a padded string with spaces
-    return std::string(padding_side, ' ') + text + std::string(padding_total - padding_side, ' ');
-}
 
 static bool ReadLineOnChange(const char *filename, std::string *out,
                              stat_fingerprint_t *last_file_status) {
