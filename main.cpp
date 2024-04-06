@@ -395,7 +395,11 @@ int main(int argc, char *argv[]) {
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
     if (draw_on_frame) {
 
-        bool has_two_lines = !lines[1]->empty();
+std::cout << "Line 0: '" << *lines[0] << "'" << std::endl;
+std::cout << "Line 1: '" << *lines[1] << "'" << (lines[1]->empty() ? " (empty)" : " (non-empty)") << std::endl;
+bool has_two_lines = !lines[1]->empty() && std::find_if(lines[1]->begin(), lines[1]->end(), [](unsigned char c) { return !std::isspace(c); }) != lines[1]->end();
+
+//        bool has_two_lines = !lines[1]->empty();
         int baseline_y;
         int linespace = baseline_y / 4;
         if (has_two_lines){
