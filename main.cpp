@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
   int loops = -1;
   int blink_on = 0;
   int blink_off = 0;
-  int number_modules = 1;
+  int number_modules = matrix_options.chain_length;
   int char_per_module = 10;
 
   //Multi-line support
@@ -237,7 +237,6 @@ int main(int argc, char *argv[]) {
     case 'i': input_file = strdup(optarg); break;
     case 't': letter_spacing = atoi(optarg); break;
     case 'C':
-    case 'm': number_modules = atoi(optarg); break;
       if (!parseColor(&color, optarg)) {
         fprintf(stderr, "Invalid color spec: %s\n", optarg);
         return usage(argv[0]);
