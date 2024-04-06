@@ -178,6 +178,23 @@ int main(int argc, char *argv[]) {
                                          &matrix_options, &runtime_opt)) {
     return usage(argv[0]);
   }
+  
+  printf("Matrix Options:\n");
+  printf("  Rows: %d\n", matrix_options.rows);
+  printf("  Cols: %d\n", matrix_options.cols);
+  printf("  Chain length: %d\n", matrix_options.chain_length);
+  printf("  Parallel: %d\n", matrix_options.parallel);
+  printf("  Brightness: %d\n", matrix_options.brightness);
+  printf("  PWM Bits: %d\n", matrix_options.pwm_bits);
+  printf("  PWM LSB Nanoseconds: %d\n", matrix_options.pwm_lsb_nanoseconds);
+  printf("  LED RGB Sequence: %s\n", matrix_options.led_rgb_sequence);
+  printf("  Pixel Mapper Config: %s\n", matrix_options.pixel_mapper_config ? matrix_options.pixel_mapper_config : "None");
+
+  printf("Runtime Options:\n");
+  printf("  GPIO Slowdown: %d\n", runtime_opt.gpio_slowdown);
+  printf("  Daemon: %d\n", runtime_opt.daemon);
+  printf("  Drop privileges: %d\n", runtime_opt.drop_privileges);
+
 
   Color color(255, 255, 255);
   Color bg_color(0, 0, 0);
@@ -242,12 +259,6 @@ int main(int argc, char *argv[]) {
 
   stat_fingerprint_t last_change = 0;
 
-//  if (input_file) {
-//    if (!ReadLineOnChange(input_file, &line, &last_change)) {
-//      fprintf(stderr, "Couldn't read file '%s'\n", input_file);
-//      return usage(argv[0]);
-//    }
-//  }
   if (input_file) {
     if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
       fprintf(stderr, "Couldn't read file '%s'\n", input_file);
@@ -289,14 +300,19 @@ int main(int argc, char *argv[]) {
     outline_font = font.CreateOutlineFont();
   }
 
-  
   RGBMatrix *canvas = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
-  printf("Canvas width and height\n");
-  printf(*canvas->width());
-  printf(*canvas->height());
 
-  if (canvas == NULL)
-    return 1;
+ // if (canvas == NULL)
+ //   return 1;
+
+  if (canvas != NULL) {
+    printf("Canvas created successfully.\n");
+    printf("  Canvas width: %d, Canvas height: %d\n", canvas->width(), canvas->height());
+  } else {
+    printf("Failed to create canvas.\n");
+    return 1;  // or handle the error as appropriate
+  }
+
 
   const bool all_extreme_colors = (matrix_options.brightness == 100)
     && FullSaturation(color)
@@ -353,6 +369,27 @@ int main(int argc, char *argv[]) {
     offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     const bool draw_on_frame = (blink_on <= 0)
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
+
+
+    if (!font.LoadFont(bdf_font_file)) {
+        fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
+        return 1;
+    } else {
+        printf("Font '%s' loaded.\n", bdf_font_file);
+        printf("  Font height: %d\n", font.height());
+    }
+    
+    if (with_outline) {
+        printf("Outline font created based on '%s'.\n", bdf_font_file);
+    }
+    
+    printf("Text Properties:\n");
+    printf("  Color: (%d, %d, %d)\n", color.r, color.g, color.b);
+    printf("  Background Color: (%d, %d, %d)\n", bg_color.r, bg_color.g, bg_color.b);
+    printf("  Outline Color: (%d, %d, %d)\n", outline_color.r, outline_color.g, outline_color.b);
+    printf("  Letter Spacing: %d\n", letter_spacing);
+    printf("  X Origin: %d, Y Origin: %d\n", x_orig, y_orig);
+    
 
     if (draw_on_frame) {
 
