@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
         int baseline_y;
         if (has_two_lines){
           baseline_y = y + font.baseline();
-          int second_line_y = 0;
+          int second_line_y = y;
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, second_line_y,
@@ -419,7 +419,7 @@ int main(int argc, char *argv[]) {
                                  lines[0]->c_str(), letter_spacing - 2);
         }
         rgb_matrix::DrawText(offscreen_canvas, font,
-                                      x, baseline_y,
+                                      x, y,
                                       color, nullptr,
                                       lines[0]->c_str(), letter_spacing);
 
