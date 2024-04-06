@@ -92,13 +92,7 @@ static void add_micros(struct timespec *accumulator, long micros) {
 typedef uint64_t stat_fingerprint_t;
 
 static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*>& out,
-                                  stat_fingerprint_t *last_file_status) {
-//  if (out.size() != 2) {
-//    std::cerr << "Error: Output vector must contain two string pointers." << std::endl;
-//    return false;
-//  }
-
-//  printf("aqui \n");
+                                  stat_fingerprint_t *last_file_status, int max_line_length) {
 
   struct stat sb;
   if (stat(filename, &sb) < 0) {
@@ -106,14 +100,12 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
     return false;
   }
 
-//  printf("aqui tambien\n");
 
   const stat_fingerprint_t fp = ((uint64_t)sb.st_mtime << 32) + sb.st_size;
   if (fp == *last_file_status) {
     return false; // No change according to stat()
   }
 
-//  printf("aqui de nuevo \n");
   *last_file_status = fp;
   std::ifstream fs(filename);
   if (!fs.is_open()) {
@@ -121,25 +113,34 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
     return false;
   }
 
-//  printf("aqui sigue igual \n");
   std::string str((std::istreambuf_iterator<char>(fs)),
                   std::istreambuf_iterator<char>());
 
   size_t newline_pos = str.find('\n');
   std::replace(str.begin(), str.end(), '\n', ' '); 
   if (newline_pos != std::string::npos) {
-    // Found a newline, split the string.
     
-    *out[0] = str.substr(0, newline_pos); // First part until newline
-    *out[1] = str.substr(newline_pos + 1); // Rest after the newline
+    *out[0] = centerText(str.substr(0, newline_pos), max_line_length); // First part until newline
+    *out[1] = centerText(str.substr(newline_pos + 1), max_line_length); // Rest after the newline
   } else {
-    // No newline found, entire content goes into the first string, second string remains empty.
-    *out[0] = str;
+    *out[0] = centerText(str, max_line_length); // If no newline, center the whole string
     out[1]->clear();
   }
-
-//  printf("y aqui lo mismo \n");
   return true;
+}
+
+std::string centerText(const std::string& text, int max_line_length) {
+    int text_length = text.length();
+    if (text_length >= max_line_length) {
+        // If the text is longer or equal to the max length, return it as is.
+        return text;
+    }
+
+    int padding_total = max_line_length - text_length;
+    int padding_side = padding_total / 2; // Evenly distribute padding on both sides
+
+    // Create a padded string with spaces
+    return std::string(padding_side, ' ') + text + std::string(padding_total - padding_side, ' ');
 }
 
 static bool ReadLineOnChange(const char *filename, std::string *out,
@@ -212,6 +213,8 @@ int main(int argc, char *argv[]) {
   int loops = -1;
   int blink_on = 0;
   int blink_off = 0;
+  int number_modules = 1;
+  int char_per_module = 10;
 
   //Multi-line support
   std::string firstLine, secondLine;
@@ -234,6 +237,7 @@ int main(int argc, char *argv[]) {
     case 'i': input_file = strdup(optarg); break;
     case 't': letter_spacing = atoi(optarg); break;
     case 'C':
+    case 'm': number_modules = atoi(optarg); break;
       if (!parseColor(&color, optarg)) {
         fprintf(stderr, "Invalid color spec: %s\n", optarg);
         return usage(argv[0]);
@@ -257,10 +261,12 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  int max_line_length = char_per_module * number_modules;
+
   stat_fingerprint_t last_change = 0;
 
   if (input_file) {
-    if (!ReadSplitLineOnChange(input_file, lines, &last_change)) {
+    if (!ReadSplitLineOnChange(input_file, lines, &last_change, max_line_length)) {
       fprintf(stderr, "Couldn't read file '%s'\n", input_file);
       return usage(argv[0]);
     }
@@ -345,8 +351,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  int x = x_orig;
-  int y = y_orig;
+  //int x = x_orig;
+  //int y = y_orig;
+  int x = 0;
+  int y = 0;  
   int length = 0;
 
   struct timespec next_frame = {0, 0};
@@ -372,7 +380,7 @@ int main(int argc, char *argv[]) {
       }
   while (!interrupt_received && loops != 0) {
     if (input_file) {
-      ReadSplitLineOnChange(input_file, lines, &last_change);
+      ReadSplitLineOnChange(input_file, lines, &last_change, max_line_length);
       //x = x_orig;
       //y = y_orig;
       }
@@ -404,21 +412,32 @@ int main(int argc, char *argv[]) {
                                  x, second_line_y,
                                  color, nullptr,
                                  lines[1]->c_str(), letter_spacing);
-        }
 
-        if (outline_font) {
-            rgb_matrix::DrawText(offscreen_canvas, *outline_font,
-                                 x - 1, baseline_y,
-                                 outline_color, nullptr,
-                                 lines[0]->c_str(), letter_spacing - 2);
-        }
-        rgb_matrix::DrawText(offscreen_canvas, font,
-                                      x, baseline_y,
-                                      color, nullptr,
-                                      lines[0]->c_str(), letter_spacing);
+            if (outline_font) {
+                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+                                     x - 1, baseline_y,
+                                     outline_color, nullptr,
+                                     lines[0]->c_str(), letter_spacing - 2);
+            }
+            rgb_matrix::DrawText(offscreen_canvas, font,
+                                          x, baseline_y,
+                                          color, nullptr,
+                                          lines[0]->c_str(), letter_spacing);
 
-        // Draw the second line if it exists
         
+        } else {
+            baseline_y = y + 2 * font.baseline();
+            if (outline_font) {
+                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+                                     x - 1, baseline_y,
+                                     outline_color, nullptr,
+                                     lines[0]->c_str(), letter_spacing - 2);
+            }
+            rgb_matrix::DrawText(offscreen_canvas, font,
+                                 x, baseline_y,
+                                 color, nullptr,
+                                 lines[0]->c_str(), letter_spacing);
+        }
     }
 
 
