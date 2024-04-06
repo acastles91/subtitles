@@ -430,7 +430,7 @@ bool has_two_lines = !lines[1]->empty() && std::find_if(lines[1]->begin(), lines
         
         } else {
             //printf("Drawing single line\n");
-            baseline_y = y + 2 * font.baseline() - linespace + 2;
+            baseline_y = y + 2 * font.baseline() - linespace + 3;
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, baseline_y,
