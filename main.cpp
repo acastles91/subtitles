@@ -289,7 +289,12 @@ int main(int argc, char *argv[]) {
     outline_font = font.CreateOutlineFont();
   }
 
+  
   RGBMatrix *canvas = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
+  printf("Canvas width and height\n");
+  printf(*canvas->width());
+  printf(*canvas->height());
+
   if (canvas == NULL)
     return 1;
 
