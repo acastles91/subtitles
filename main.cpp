@@ -390,9 +390,10 @@ int main(int argc, char *argv[]) {
 
         bool has_two_lines = !lines[1]->empty();
         int baseline_y;
+        int linespace = baseline_y / 3;
         if (has_two_lines){
           baseline_y = y + font.baseline();
-          int second_line_y = y + 2 * font.baseline();
+          int second_line_y = y + 2 * font.baseline() + linespace;
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, second_line_y,
