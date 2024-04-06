@@ -349,8 +349,6 @@ int main(int argc, char *argv[]) {
   int y = y_orig;
   int length = 0;
 
-  
-
   struct timespec next_frame = {0, 0};
 
   uint64_t frame_counter = 0;
@@ -375,8 +373,8 @@ int main(int argc, char *argv[]) {
   while (!interrupt_received && loops != 0) {
     if (input_file) {
       ReadSplitLineOnChange(input_file, lines, &last_change);
-      x = x_orig;
-      y = 5;
+      //x = x_orig;
+      //y = y_orig;
       }
     
 //    if (input_file){    //if (input_file && ReadLineOnChange(input_file, &line, &last_change)) {
@@ -388,18 +386,13 @@ int main(int argc, char *argv[]) {
     const bool draw_on_frame = (blink_on <= 0)
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
 
-
-    
-
-        
-
     if (draw_on_frame) {
 
         bool has_two_lines = !lines[1]->empty();
         int baseline_y;
         if (has_two_lines){
           baseline_y = y + font.baseline();
-          int second_line_y = y;
+          int second_line_y = y + 2 * font.baseline();
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, second_line_y,
@@ -419,7 +412,7 @@ int main(int argc, char *argv[]) {
                                  lines[0]->c_str(), letter_spacing - 2);
         }
         rgb_matrix::DrawText(offscreen_canvas, font,
-                                      x, y,
+                                      x, baseline_y,
                                       color, nullptr,
                                       lines[0]->c_str(), letter_spacing);
 
