@@ -425,6 +425,7 @@ int main(int argc, char *argv[]) {
 
         
         } else {
+            printf("Drawing single line\n");
             baseline_y = y + 2 * font.baseline();
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
