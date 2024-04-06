@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
         int baseline_y;
         if (has_two_lines){
           baseline_y = y + font.baseline();
-          int second_line_y = baseline_y * 2;
+          int second_line_y = 0;
             if (outline_font) {
                 rgb_matrix::DrawText(offscreen_canvas, *outline_font,
                                      x - 1, second_line_y,
