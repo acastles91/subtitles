@@ -131,12 +131,12 @@ static bool ReadSplitLineOnChange(const char *filename, std::vector<std::string*
   size_t newline_pos = str.find('\n');
   if (newline_pos != std::string::npos) {
     *out[0] = centerText(str.substr(0, newline_pos), max_line_length); // First part until newline
-    std::replace(*out[0]->begin(), *out[0]->end(), '\n', ' '); 
+    std::replace(out[0]->begin(), out[0]->end(), '\n', ' '); 
     *out[1] = centerText(str.substr(newline_pos + 1), max_line_length); // Rest after the newline
-    std::replace(*out[1]->begin(), *out[1]->end(), '\n', ' '); 
+    std::replace(out[1]->begin(), out[1]->end(), '\n', ' '); 
   } else {
     *out[0] = centerText(str, max_line_length); // If no newline, center the whole string
-    std::replace(*out[0]->begin(), *out[0]->end(), '\n', ' '); 
+    std::replace(out[0]->begin(), out[0]->end(), '\n', ' '); 
     out[1]->clear();
   }
   return true;
