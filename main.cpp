@@ -393,7 +393,6 @@ int main(int argc, char *argv[]) {
     offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     const bool draw_on_frame = (blink_on <= 0)
       || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
-
     if (draw_on_frame) {
 
         bool has_two_lines = !lines[1]->empty();
@@ -440,6 +439,53 @@ int main(int argc, char *argv[]) {
                                  lines[0]->c_str(), letter_spacing);
         }
     }
+//    if (draw_on_frame) {
+//
+//        bool has_two_lines = !lines[1]->empty();
+//        int baseline_y = y + font.baseline();
+//        int linespace = baseline_y / 4;
+//
+//        if (has_two_lines) {
+//          baseline_y = y + font.baseline();
+//          int second_line_y = y + 2 * font.baseline() + linespace;
+//            if (outline_font) {
+//                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+//                                     x - 1, second_line_y,
+//                                     outline_color, nullptr,
+//                                     lines[1]->c_str(), letter_spacing - 2);
+//            }
+//            rgb_matrix::DrawText(offscreen_canvas, font,
+//                                 x, second_line_y,
+//                                 color, nullptr,
+//                                 lines[1]->c_str(), letter_spacing);
+//
+//            if (outline_font) {
+//                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+//                                     x - 1, baseline_y,
+//                                     outline_color, nullptr,
+//                                     lines[0]->c_str(), letter_spacing - 2);
+//            }
+//            rgb_matrix::DrawText(offscreen_canvas, font,
+//                                          x, baseline_y,
+//                                          color, nullptr,
+//                                          lines[0]->c_str(), letter_spacing);
+//
+//        
+//        } else {
+//            printf("Drawing single line\n");
+//            baseline_y = y + 2 * font.baseline();
+//            if (outline_font) {
+//                rgb_matrix::DrawText(offscreen_canvas, *outline_font,
+//                                     x - 1, baseline_y,
+//                                     outline_color, nullptr,
+//                                     lines[0]->c_str(), letter_spacing - 2);
+//            }
+//            rgb_matrix::DrawText(offscreen_canvas, font,
+//                                 x, baseline_y,
+//                                 color, nullptr,
+//                                 lines[0]->c_str(), letter_spacing);
+//        }
+//    }
 
 
     // Make sure render-time delays are not influencing scroll-time
