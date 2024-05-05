@@ -66,7 +66,7 @@ HARDWARE_DESC?=adafruit-hat
 # typically should double check cables and add TTL level converter if you
 # haven't.
 # Flag: --led-slowdown-gpio
-#DEFINES+=-DRGB_SLOWDOWN_GPIO=1
+DEFINES+=-DRGB_SLOWDOWN_GPIO=4
 
 # This allows to change the base time-unit for the on-time in the lowest
 # significant bit in nanoseconds.
