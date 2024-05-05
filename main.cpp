@@ -351,10 +351,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  //int x = x_orig;
-  //int y = y_orig;
-  int x = 0;
-  int y = 0;  
+  int x = x_orig;
+  int y = y_orig;
+  //int x = 0;
+  //int y = 0;  
   int length = 0;
 
   struct timespec next_frame = {0, 0};
