@@ -216,13 +216,13 @@ int main(int argc, char *argv[]) {
   int blink_off = 0;
   int number_modules = matrix_options.chain_length;
   int char_per_module = 10;
-
+  int linespace = 0;
   //Multi-line support
   std::string firstLine, secondLine;
   std::vector<std::string*> lines{&firstLine, &secondLine};
 
   int opt;
-  while ((opt = getopt(argc, argv, "x:y:f:C:B:O:t:s:l:b:i:")) != -1) {
+  while ((opt = getopt(argc, argv, "x:y:f:C:B:O:t:s:l:b:i:e:")) != -1) {
     switch (opt) {
     case 's': speed = atof(optarg); break;
     case 'b':
@@ -237,6 +237,7 @@ int main(int argc, char *argv[]) {
     case 'f': bdf_font_file = strdup(optarg); break;
     case 'i': input_file = strdup(optarg); break;
     case 't': letter_spacing = atoi(optarg); break;
+    case 'e': linespace = atoi(optarg); break;
     case 'C':
       if (!parseColor(&color, optarg)) {
         fprintf(stderr, "Invalid color spec: %s\n", optarg);
@@ -366,6 +367,7 @@ int main(int argc, char *argv[]) {
   printf("  Outline Color: (%d, %d, %d)\n", outline_color.r, outline_color.g, outline_color.b);
   printf("  Letter Spacing: %d\n", letter_spacing);
   printf("  X Origin: %d, Y Origin: %d\n", x_orig, y_orig);
+  printf("  Linespace: %d\n", linespace);
 
   if (!font.LoadFont(bdf_font_file)) {
           fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
@@ -401,7 +403,7 @@ bool has_two_lines = !lines[1]->empty() && std::find_if(lines[1]->begin(), lines
 
 //        bool has_two_lines = !lines[1]->empty();
         int baseline_y;
-        int linespace = baseline_y / 4;
+//        int linespace = baseline_y / 4;
         if (has_two_lines){
           baseline_y = y + font.baseline();
           int second_line_y = y + 2 * font.baseline() + linespace;

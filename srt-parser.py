@@ -113,10 +113,11 @@ def write_to_input_file_lines(lines):
     with open('input.txt', 'w') as file:
         for line in lines:
             file.write(line + "\n")
-    if text == ' ':
-        print("Clearing the display.")
-    else:
-        print(f"Displaying text: {lines}")
+            print(line + "\n")
+        if line == ' ':
+            print("Clearing the display.")
+        else:
+            print(f"Displaying text: {lines}")
 
 # Using the lines from earlier
 def split_text_into_lines(text, max_chars_per_line):
