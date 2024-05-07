@@ -169,7 +169,7 @@ def main(srt_filename, audio_filename, max_chars):
     play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
     previous_end_time = None
 
-    for start_time, end_time, text in parse_srt(srt_filename):
+    for start_time, end_time, text in parse_srt(srt_filename, max_chars):
         # Center each line of text and write to file
         centered_text = center_text(text, max_chars)
 
