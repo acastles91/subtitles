@@ -199,7 +199,6 @@ def split_text_into_lines(text, max_chars_per_line):
     return lines
 
 def main(srt_filename, audio_filename, max_chars):
-    while(1):
         
         play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
         previous_end_time = None
