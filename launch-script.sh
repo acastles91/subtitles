@@ -25,7 +25,7 @@ echo " " > "$INPUT_TXT_PATH"
 #sleep 2
 
 # Start the parser script
-python3 "$PARSER_SCRIPT" -20
+python3 "$PARSER_SCRIPT" 54 
 
 # Optional: wait for the parser script to finish
 wait
