@@ -159,7 +159,8 @@ def main(srt_filename, audio_filename, max_chars):
 
         # Avoid writing extra new lines if text is empty
         with open("input.txt", "w", encoding='utf-8') as out_file:
-            out_file.write(centered_text + "\n\n")
+            ##out_file.write(centered_text + "\n\n")
+            out_file.write(centered_text)
 
         time.sleep((end_time - start_time).total_seconds())
         previous_end_time = end_time
