@@ -113,6 +113,10 @@ def write_to_input_file_lines(lines):
     with open('input.txt', 'w') as file:
         for line in lines:
             file.write(line + "\n")
+    if text == ' ':
+        print("Clearing the display.")
+    else:
+        print(f"Displaying text: {lines}")
 
 # Using the lines from earlier
 def split_text_into_lines(text, max_chars_per_line):
@@ -154,9 +158,8 @@ def main(srt_filename, audio_filename, max_chars):
         time.sleep(wait_time)
 
         # Avoid writing extra new lines if text is empty
-        if text.strip():
-            with open("input.txt", "w", encoding='utf-8') as out_file:
-                out_file.write(centered_text.strip() + "\n\n")
+        with open("input.txt", "w", encoding='utf-8') as out_file:
+            out_file.write(centered_text + "\n\n")
 
         time.sleep((end_time - start_time).total_seconds())
         previous_end_time = end_time
