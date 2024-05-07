@@ -95,6 +95,7 @@ def parse_srt(filename, max_chars):
                 centered_lines = [center_text(remove_html_tags(line), max_chars) for line in text_lines]
                 centered_text = '\n'.join(centered_lines)  # Combine lines back into single text block
                 yield start_time, end_time, centered_text
+                print(f"Start time: {start_time}, End time: {end_time}, Text: {centered_text}")
             else:
                 print(f"Unexpected format in time line: {lines[1]}")
         else:
@@ -147,6 +148,7 @@ def main(srt_filename, audio_filename, max_chars):
     for start_time, end_time, text in parse_srt(srt_filename, max_chars):
         # Center each line of text and write to file
         centered_text = center_text(text, max_chars)
+        print("Centered text: " + centered_text)
 
         if previous_end_time is None:
             wait_time = start_time.total_seconds()
@@ -170,46 +172,6 @@ def main(srt_filename, audio_filename, max_chars):
     with open("input.txt", "w", encoding='utf-8') as out_file:
         out_file.write(' ')
 
-#def main(srt_filename, audio_filename, max_chars):
-#        
-#        play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
-#        previous_end_time = None
-#        
-#        for start_time, end_time, text in parse_srt(srt_filename):
-#            # Split the text into lines that fit your LED matrix
-#            #lines = split_text_into_lines(text, max_chars_per_line)
-#            lines = split_text_by_length(text, max_chars)
-#            # Write the lines to input.txt for your C++ program to display
-#            # Calculate wait time until the next subtitle
-#        
-#            if previous_end_time is None:
-#                # If this is the first subtitle, wait until its start time
-#                wait_time = start_time.total_seconds()
-#            else:
-#                # Otherwise, wait until the start time of the next subtitle,
-#                # but ensure there's no negative wait time in case subtitles overlap or are back-to-back
-#                wait_time = max(0, (start_time - previous_end_time).total_seconds())
-#        
-#             # Clear the display if there's a gap between the previous subtitle and the next
-#            if previous_end_time is not None and wait_time > 0:
-#                write_to_input_file(' ')  # Clear the display during the blank moment
-#            print("Waiting wait_time " + str(wait_time))
-#            time.sleep(wait_time)  # Wait until it's time for the next subtitle
-#        
-#            #write_to_input_file_lines(lines)
-#            #write_to_input_file(text)  # Show the subtitle text
-#            with open("input.txt", "w", encoding='utf-8') as out_file:
-#                out_file.write(text + "\n\n")  # Write each subtitle entry separated by double newlines
-#        
-#            # Wait for the duration of the subtitle
-#            duration = (end_time - start_time).total_seconds()
-#            time.sleep(duration)
-#        
-#            previous_end_time = end_time  # Update the end time for the next loop iteration
-#        
-#            # Clear the display after the last subtitle
-#            with open("input.txt", "w", encoding='utf-8') as out_file:
-#                out_file.write(' ')
 
 if __name__ == "__main__":
     srt_filename = 'files/subtitles.srt'
