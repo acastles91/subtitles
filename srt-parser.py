@@ -100,36 +100,6 @@ def parse_srt(filename, max_chars):
         else:
             print(f"Unexpected format in subtitle block: {subtitle}")
             
-#def parse_srt(filename):
-#    """Parse an SRT file and yield start time, end time, and text for each subtitle entry."""
-#    with open(filename, 'r', encoding='utf-8') as file:
-#        content = file.read().strip()
-#
-#    # Preprocess content to ensure correct block separation
-#    content = preprocess_srt_content(content)
-#    # Split the content by double newlines to separate each subtitle block
-#    subtitles = content.split('\n\n')
-#    
-#    for subtitle in subtitles:
-#        lines = subtitle.split('\n')
-#        if len(lines) >= 3:
-#            sequence_number = lines[0]
-#            times = lines[1].split(' --> ')
-#            if len(times) == 2:  # Ensure there are exactly two times (start and end)
-#                start_time = parse_time(times[0].strip())
-#                end_time = parse_time(times[1].strip())
-#                text_lines = lines[2:]
-#                text_lines = [center_text(line, max_chars) for line in text_lines]
-#                text = '\n'.join(text_lines)  # Keep original lines as they are
-#                text = remove_html_tags(text)
-#                yield start_time, end_time, text
-#            else:
-#                print(f"Unexpected format in time line: {lines[1]}")
-#        else:
-#            print(f"Unexpected format in subtitle block: {subtitle}")
-
-# Function to write text to input.txt
-
 
 def write_to_input_file(text):
     with open('input.txt', 'w') as file:
