@@ -142,37 +142,38 @@ def split_text_into_lines(text, max_chars_per_line):
     return lines
 
 def main(srt_filename, audio_filename, max_chars):
-    play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
-    previous_end_time = None
+    while True:
+        play_audio(audio_filename)  # Assuming this is correctly implemented elsewhere
+        previous_end_time = None
 
-    print("\n\n\n")
+        print("\n\n\n")
 
-    for start_time, end_time, text in parse_srt(srt_filename, max_chars):
-        # Center each line of text and write to file
-        centered_text = center_text(text, max_chars)
-        #print("Centered text: " + "\n" + centered_text)
+        for start_time, end_time, text in parse_srt(srt_filename, max_chars):
+            # Center each line of text and write to file
+            centered_text = center_text(text, max_chars)
+            #print("Centered text: " + "\n" + centered_text)
 
-        if previous_end_time is None:
-            wait_time = start_time.total_seconds()
-        else:
-            wait_time = max(0, (start_time - previous_end_time).total_seconds())
+            if previous_end_time is None:
+                wait_time = start_time.total_seconds()
+            else:
+                wait_time = max(0, (start_time - previous_end_time).total_seconds())
 
-        if wait_time > 0:
-            write_to_input_file(' ')  # Clear the display during the blank moment
-        print("Waiting time: " + str(wait_time) + "\n\n")
-        time.sleep(wait_time)
+            if wait_time > 0:
+                write_to_input_file(' ')  # Clear the display during the blank moment
+            print("Waiting time: " + str(wait_time) + "\n\n")
+            time.sleep(wait_time)
 
-        # Avoid writing extra new lines if text is empty
+            # Avoid writing extra new lines if text is empty
+            with open("input.txt", "w", encoding='utf-8') as out_file:
+                ##out_file.write(centered_text + "\n\n")
+                out_file.write(centered_text)
+
+            time.sleep((end_time - start_time).total_seconds())
+            previous_end_time = end_time
+
+        # Clear the display after the last subtitle
         with open("input.txt", "w", encoding='utf-8') as out_file:
-            ##out_file.write(centered_text + "\n\n")
-            out_file.write(centered_text)
-
-        time.sleep((end_time - start_time).total_seconds())
-        previous_end_time = end_time
-
-    # Clear the display after the last subtitle
-    with open("input.txt", "w", encoding='utf-8') as out_file:
-        out_file.write(' ')
+            out_file.write(' ')
 
 
 if __name__ == "__main__":
