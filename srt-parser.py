@@ -95,7 +95,7 @@ def parse_srt(filename, max_chars):
                 centered_lines = [center_text(remove_html_tags(line), max_chars) for line in text_lines]
                 centered_text = '\n'.join(centered_lines)  # Combine lines back into single text block
                 yield start_time, end_time, centered_text
-                print(f"Start time: {start_time} \n End time: {end_time} \n Text:/n {centered_text} \n Length text: {len(centered_text)}")
+                print(f"Start time: {start_time} \n End time: {end_time} \n Text: \n {centered_text} \n Length text: {len(centered_text)}")
             else:
                 print(f"Unexpected format in time line: {lines[1]}")
         else:
