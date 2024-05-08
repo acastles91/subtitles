@@ -5,6 +5,9 @@ import time
 import pygame
 import re
 import sys
+import os
+
+os.environ['AUDIODEV'] = 'default'
 
 # Function to parse SRT file and yield subtitles with timecodes
 # Function to write text to input.txt
