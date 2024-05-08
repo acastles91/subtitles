@@ -1,4 +1,5 @@
-files/*
+files/audio.wav
+files/reference.mp4
+files/marlaangu-audio.mov
 ./subtitle
-:w
 
