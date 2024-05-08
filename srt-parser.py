@@ -148,7 +148,7 @@ def main(srt_filename, audio_filename, max_chars):
     for start_time, end_time, text in parse_srt(srt_filename, max_chars):
         # Center each line of text and write to file
         centered_text = center_text(text, max_chars)
-        print("Centered text: " + "\n" + centered_text + "\n")
+        print("Centered text: " + "\n" + centered_text)
 
         if previous_end_time is None:
             wait_time = start_time.total_seconds()
