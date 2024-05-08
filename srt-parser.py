@@ -7,6 +7,7 @@ import re
 import sys
 import os
 
+os.environ['SDL_AUDIODRIVER'] = 'alsa'
 os.environ['AUDIODEV'] = 'default'
 
 # Function to parse SRT file and yield subtitles with timecodes
