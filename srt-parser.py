@@ -159,7 +159,7 @@ def main(srt_filename, audio_filename, max_chars):
 
         if wait_time > 0:
             write_to_input_file(' ')  # Clear the display during the blank moment
-        print("Waiting time: " + str(wait_time))
+        print("Waiting time: " + str(wait_time) + "\n\n")
         time.sleep(wait_time)
 
         # Avoid writing extra new lines if text is empty
