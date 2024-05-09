@@ -73,7 +73,7 @@ The script reads audio (`audio.wav`) and subtitle (`subtitles.srt`) files from t
 
 ## Accessing Raspberry Pi in Headless Mode
 
-This project is designed to be run on a Raspberry Pi configured for headless operation. For guidance on setting up your Raspberry Pi in headless mode, you can refer to this detailed guide:
+This project is designed to be run on a Raspberry Pi 4 configured for headless operation. For guidance on setting up your Raspberry Pi in headless mode, you can refer to this detailed guide:
 
 [Setting up Raspberry Pi in Headless Mode](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md)
 
