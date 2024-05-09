@@ -1,0 +1,17 @@
+[Unit]
+Description=Startup service
+After=network.target sound.target
+
+[Service]
+Type=idle
+ExecStart=/home/nathan/subtitles/launch-script.sh
+WorkingDirectory=/home/nathan/subtitles
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/nathan/.Xauthority"
+Environment="PULSE_SERVER=/run/user/$(id -u nathan)/pulse/native"
+User=nathan
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
